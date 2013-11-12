@@ -59,6 +59,8 @@ private:
 
     QQueue< QByteArray > m_ZBFrameQueue;
 
+    void handleDataFrames( );
+
     void decodeZBAPIFrame( QByteArray& completeFrame );
 
     QByteArray m_frameInProgress;

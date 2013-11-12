@@ -50,20 +50,28 @@ void XBeeAPIReaderDialog::readResponse()
     QByteArray data = m_serialPort.readAll();
     unescapeSerialData( data );
 
+    qDebug() << "--- readResponse()";
     dumpByteArray( data );
 
     // Are we in the middle of building a frame?
     if ( m_frameInProgress.length() != 0 )
     {
+        qDebug() << "In the middle of building a frame. What we have so far:";
+        dumpByteArray( m_frameInProgress );
+        qDebug() << "What we just got:";
+        dumpByteArray( data );
         // How much more data do we need to complete the frame?
         if ( m_frameInProgress.length() > 3 )
         {
             int totalFrameSize = m_frameInProgress.length() + 4;
             int bytesMissing = totalFrameSize - m_frameInProgress.length();
+
+            qDebug() << "total frame length = " << totalFrameSize << ". Missing " << bytesMissing << "bytes.";
             if ( data.length() < bytesMissing )
             {
                 // Don't have enough to finish the frame, so append what's
                 // been received and move on.
+                qDebug() << "Not enough to finish frame. Appending to work in progress and moving on.";
                 m_frameInProgress.append( data );
                 return;
             }
@@ -74,7 +82,8 @@ void XBeeAPIReaderDialog::readResponse()
                 // we start on a new on next time through.
                 m_frameInProgress.append( data );
 
-                m_ZBFrameQueue.push_front( QByteArray( m_frameInProgress ));
+                qDebug() << "Finishing off with just the right amount of data.";
+                m_ZBFrameQueue.enqueue( QByteArray( m_frameInProgress ));
                 m_frameInProgress.clear();
             }
             else
@@ -84,7 +93,12 @@ void XBeeAPIReaderDialog::readResponse()
                 m_frameInProgress.append( data.left( bytesMissing ));
                 data = data.mid( bytesMissing );
 
-                m_ZBFrameQueue.push_front( QByteArray( m_frameInProgress ));
+                qDebug() << "Finished a frame (enqueueing) with data left over.";
+                m_ZBFrameQueue.enqueue( QByteArray( m_frameInProgress ));
+                qDebug() << "Looks like this:";
+                dumpByteArray( m_frameInProgress );
+                qDebug() << "Data after clipping front:";
+                dumpByteArray( data );
                 m_frameInProgress.clear();
             }
         }
@@ -93,10 +107,12 @@ void XBeeAPIReaderDialog::readResponse()
     // We don't have a frame in progress and we've got some data.
     while ( !data.isEmpty( ))
     {
+        qDebug() << "Don't have a frame in progress and we have some data.";
         int startByteIndex = data.indexOf( 0x7E );
         if ( startByteIndex == -1 )
         {
             // No start byte found, move on.
+            qDebug() << "Didn't find a start byte. Moving on.";
             data.clear();
             return;
         }
@@ -114,6 +130,7 @@ void XBeeAPIReaderDialog::readResponse()
         else
         {
             // Not enough data to get a length. Append what we have and return.
+            qDebug() << "Not enough data to get a length. Appending and moving on.";
             m_frameInProgress.append( data );
             return;
         }
@@ -124,22 +141,36 @@ void XBeeAPIReaderDialog::readResponse()
             QByteArray completeFrame;
             completeFrame = data.left( newFrameLength + 4 );
 
-            m_ZBFrameQueue.push_front( completeFrame );
+            qDebug() << "Enqueueing a finished frame with more data to go.";
+            m_ZBFrameQueue.enqueue( completeFrame );
+            qDebug() << "New Frame: ";
+            dumpByteArray( completeFrame );
 
             // Chop off what we've used.
             data = data.mid( newFrameLength + 4 );
+            qDebug() << "Data after enqueueing:";
+            dumpByteArray( data );
         }
         else
         {
             // Can't finish it, so append what we have;
+            qDebug() << "Can't finish frame in progress with the data we have. Appending and continuing.";
             m_frameInProgress.append( data );
             data.clear();
         }
     }
+    handleDataFrames( );
+}
 
+void XBeeAPIReaderDialog::handleDataFrames( )
+{
+    while ( !m_ZBFrameQueue.isEmpty() )
+    {
+        qDebug() << "Number of complete frames in the queue = " << m_ZBFrameQueue.size();
+        QByteArray frame = m_ZBFrameQueue.dequeue();
 
-    qDebug() << "Number of complete frames in the queue = " << m_ZBFrameQueue.size();
-
+//        dumpByteArray( frame );
+    }
 }
 
 void XBeeAPIReaderDialog::on_serialPortComboBox_currentIndexChanged(int index)

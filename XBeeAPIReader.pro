@@ -19,3 +19,6 @@ SOURCES += main.cpp\
 HEADERS  += XBeeAPIReaderDialog.h
 
 FORMS    += XBeeAPIReaderDialog.ui
+
+OTHER_FILES += \
+    README.md
