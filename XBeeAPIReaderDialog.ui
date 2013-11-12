@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>205</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QComboBox" name="serialPortComboBox">
+   <property name="geometry">
+    <rect>
+     <x>67</x>
+     <y>13</y>
+     <width>111</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>32</x>
+     <y>15</y>
+     <width>30</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Port:</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="connectButton">
+   <property name="geometry">
+    <rect>
+     <x>183</x>
+     <y>11</y>
+     <width>94</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Connect</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="disconnectButton">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>10</y>
+     <width>114</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Disconnect</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="debugDataButton">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>140</y>
+     <width>181</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Feed me Debug Data</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>80</y>
+     <width>62</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Value</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="sensorValueLabel">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>80</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>23</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
